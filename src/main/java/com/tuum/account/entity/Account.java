@@ -1,12 +1,31 @@
 package com.tuum.account.entity;
 
+import com.tuum.account.enums.AccountStatus;
+import com.tuum.account.enums.Country;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
+import lombok.experimental.Accessors;
 
-import java.util.List;
-
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Data
-public class Account {
-    private Long accountId;
+@NoArgsConstructor
+@AllArgsConstructor
+@Accessors(chain = true)
+public class Account extends AbstractAuditable {
+
+    private Long id;
+
     private Long customerId;
-    private List<String> balances;
+
+    private Country country;
+
+    private AccountStatus status;
+
+    public Account(Long customerId, Country country, AccountStatus status) {
+        this.customerId = customerId;
+        this.country = country;
+        this.status = status;
+    }
 }

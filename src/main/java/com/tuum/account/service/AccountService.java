@@ -1,31 +1,36 @@
 package com.tuum.account.service;
 
-import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
+import com.tuum.account.dto.request.CreateAccountRequest;
+import com.tuum.account.dto.response.AccountDto;
+import com.tuum.account.entity.Account;
+import com.tuum.account.entity.AccountBalance;
+import com.tuum.account.enums.AccountStatus;
+import com.tuum.account.mapper.AccountBalanceMapper;
+import com.tuum.account.mapper.AccountMapper;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
-@AllArgsConstructor
-@NoArgsConstructor
+@RequiredArgsConstructor
 public class AccountService {
-/*
+
     private final AccountMapper accountMapper;
 
-    public ResponseEntity<AccountDto> createAccount(CreateAccountRequest createAccountRequest) {
-        // Example:
-        Account account = new Account();
-       // account.setCustomerId(request.getCustomerId());
-        // ... set other properties
+    private final AccountBalanceMapper accountBalanceMapper;
+
+    @Transactional
+    public void createAccount(@Valid CreateAccountRequest createAccountRequest) {
+        Account account = new Account(createAccountRequest.customerId(), createAccountRequest.country(), AccountStatus.ACTIVE);
 
         accountMapper.insertAccount(account);
 
-        AccountDto accountDTO = new AccountDto();
-        accountDTO.setAccountId(account.getAccountId());
-        accountDTO.setCustomerId(account.getCustomerId());
-        // ... set balances
+        createAccountRequest
+                .currencyList()
+                .forEach(currency -> {
+                    accountBalanceMapper.insertAccountBalance(new AccountBalance(account.getId(), currency));
+                });
 
-        return null;
     }
-
- */
 }
