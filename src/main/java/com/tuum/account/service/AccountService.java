@@ -38,13 +38,18 @@ public class AccountService {
         return createAccountDto(account, accountBalances);
     }
 
-    public AccountDto getAccount(Long id) {
+    public AccountDto getAccountDto(Long id) {
+        Account account = getAccount(id);
+        List<AccountBalanceDto> accountBalances = createAccountBalanceDtoList(account);
+        return createAccountDto(account, accountBalances);
+    }
+
+    protected Account getAccount(Long id) {
         Account account = accountMapper.getAccountById(id);
         if (account == null) {
             throw new AccountNotFoundException(id);
         }
-        List<AccountBalanceDto> accountBalances = createAccountBalanceDtoList(account);
-        return createAccountDto(account, accountBalances);
+        return account;
     }
 
     private static Account createNewAccountEntity(CreateAccountRequest createAccountRequest) {
@@ -65,8 +70,6 @@ public class AccountService {
     private void insertAccountBalances(CreateAccountRequest createAccountRequest, Account account) {
         createAccountRequest
                 .currencyList()
-                .forEach(currency -> {
-                    accountBalanceMapper.insertAccountBalance(new AccountBalance(account.getId(), currency));
-                });
+                .forEach(currency -> accountBalanceMapper.insertAccountBalance(new AccountBalance(account.getId(), currency)));
     }
 }

@@ -27,7 +27,6 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get account info")
     public AccountDto getAccount(@PathVariable Long id) {
-        return accountService.getAccount(id);
-
+        return accountService.getAccountDto(id);
     }
 }

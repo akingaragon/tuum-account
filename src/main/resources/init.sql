@@ -21,3 +21,17 @@ CREATE TABLE account_balance
     updated_by       varchar(255),
     updated_date     timestamp
 );
+
+CREATE TABLE transaction
+(
+    id           BIGSERIAL PRIMARY KEY,
+    account_id   BIGINT                                 NOT NULL,
+    amount       NUMERIC(18, 2)                         NOT NULL,
+    currency     VARCHAR(3)                             NOT NULL,
+    direction    VARCHAR(3)                             NOT NULL,
+    description  VARCHAR(1000)                          NOT NULL,
+    created_by   varchar(255) DEFAULT 'system_user'     NOT NULL,
+    created_date timestamp    DEFAULT CURRENT_TIMESTAMP NOT NULL,
+    updated_by   varchar(255),
+    updated_date timestamp
+);
