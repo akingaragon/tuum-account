@@ -1,6 +1,7 @@
 package com.tuum.account.controller;
 
 import com.tuum.account.dto.request.CreateAccountRequest;
+import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.service.AccountService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -18,7 +19,15 @@ public class AccountController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create account")
-    public void createAccount(@RequestBody @Valid CreateAccountRequest createAccountRequest) {
-        accountService.createAccount(createAccountRequest);
+    public AccountDto createAccount(@RequestBody @Valid CreateAccountRequest createAccountRequest) {
+        return accountService.createAccount(createAccountRequest);
+    }
+
+    @GetMapping("/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    @Operation(summary = "Get account info")
+    public AccountDto getAccount(@PathVariable Long id) {
+        return accountService.getAccount(id);
+
     }
 }
