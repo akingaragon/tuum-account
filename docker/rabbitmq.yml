@@ -1,0 +1,13 @@
+version: '3'
+
+services:
+  tuum-account-rabbitmq:
+    image: rabbitmq:3-management
+    container_name: tuum-account-rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: tuum_rabbit_user
+      RABBITMQ_DEFAULT_PASS: tuum_rabbit_password
+      RABBITMQ_DEFAULT_VHOST: dev
+    ports:
+      - 5699:5672
+      - 15999:15672

@@ -1,0 +1,10 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://localhost:5499/tuum_account_db
+    username: tuum_account_user
+    password: tuum_account_password
+    driver-class-name: org.postgresql.Driver
+
+springdoc:
+  api-docs:
+    enabled: true
