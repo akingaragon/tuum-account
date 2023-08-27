@@ -10,6 +10,8 @@ CREATE TABLE account
     updated_date timestamp
 );
 
+CREATE INDEX idx_account_customer_id ON account (customer_id);
+
 CREATE TABLE account_balance
 (
     id               BIGSERIAL PRIMARY KEY,
@@ -21,6 +23,8 @@ CREATE TABLE account_balance
     updated_by       varchar(255),
     updated_date     timestamp
 );
+
+CREATE INDEX idx_account_balance_account_id ON account_balance (account_id);
 
 CREATE TABLE transaction
 (
@@ -35,3 +39,5 @@ CREATE TABLE transaction
     updated_by   varchar(255),
     updated_date timestamp
 );
+
+CREATE INDEX idx_transaction_account_id ON transaction (account_id);
