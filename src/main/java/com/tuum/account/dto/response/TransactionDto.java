@@ -5,5 +5,5 @@ import com.tuum.account.enums.TransactionDirection;
 
 import java.math.BigDecimal;
 
-public record TransactionDto(Long transactionId, Long accountId, BigDecimal amount, Currency currency, TransactionDirection transactionDirection, String description, BigDecimal balanceAfterTransaction) {
+public record TransactionDto(Long transactionId, Long accountId, BigDecimal amount, Currency currency, TransactionDirection transactionDirection, String description) {
 }

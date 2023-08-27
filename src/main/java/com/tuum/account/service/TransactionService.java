@@ -1,6 +1,7 @@
 package com.tuum.account.service;
 
 import com.tuum.account.dto.request.CreateTransactionRequest;
+import com.tuum.account.dto.response.CreateTransactionResponseDto;
 import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.entity.Account;
 import com.tuum.account.entity.AccountBalance;
@@ -16,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -26,7 +29,7 @@ public class TransactionService {
     private final TransactionMapper transactionMapper;
 
     @Transactional
-    public synchronized TransactionDto createTransaction(CreateTransactionRequest createTransactionRequest) {
+    public synchronized CreateTransactionResponseDto createTransaction(CreateTransactionRequest createTransactionRequest) {
         Account account = accountService.getAccountById(createTransactionRequest.accountId());
         AccountBalance accountBalance = getAccountBalanceWithValidation(account, createTransactionRequest.currency());
 
@@ -47,19 +50,19 @@ public class TransactionService {
         return accountBalance;
     }
 
-    private TransactionDto processIncomingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
+    private CreateTransactionResponseDto processIncomingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
         Transaction transaction = createTransaction(createTransactionRequest, account);
         BigDecimal newAvailableAmount = accountBalance.getAvailableAmount().add(createTransactionRequest.amount());
         updateAccountBalance(accountBalance, newAvailableAmount);
-        return createTransactionDto(account, accountBalance, transaction);
+        return createTransactionDto(accountBalance, transaction);
     }
 
-    private TransactionDto processOutgoingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
+    private CreateTransactionResponseDto processOutgoingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
         if (hasSufficientFunds(createTransactionRequest, accountBalance)) {
             Transaction transaction = createTransaction(createTransactionRequest, account);
             BigDecimal newAvailableAmount = accountBalance.getAvailableAmount().subtract(createTransactionRequest.amount());
             updateAccountBalance(accountBalance, newAvailableAmount);
-            return createTransactionDto(account, accountBalance, transaction);
+            return createTransactionDto(accountBalance, transaction);
         } else {
             throw new AccountBalanceNotSufficient(account.getId());
         }
@@ -75,8 +78,8 @@ public class TransactionService {
         return createTransactionRequest.transactionDirection() == TransactionDirection.OUT;
     }
 
-    private static TransactionDto createTransactionDto(Account account, AccountBalance accountBalance, Transaction transaction) {
-        return new TransactionDto(transaction.getId(), account.getId(), transaction.getAmount(), transaction.getCurrency(), transaction.getDirection(), transaction.getDescription(), accountBalance.getAvailableAmount());
+    private static CreateTransactionResponseDto createTransactionDto(AccountBalance accountBalance, Transaction transaction) {
+        return new CreateTransactionResponseDto(createTransactionDto(transaction), accountBalance.getAvailableAmount());
     }
 
     private static boolean incomingTransaction(CreateTransactionRequest createTransactionRequest) {
@@ -97,4 +100,17 @@ public class TransactionService {
     private static boolean hasSufficientFunds(CreateTransactionRequest createTransactionRequest, AccountBalance accountBalance) {
         return accountBalance.getAvailableAmount().subtract(createTransactionRequest.amount()).compareTo(BigDecimal.ZERO) >= 0;
     }
+
+    public List<TransactionDto> getTransactionsByAccountId(Long accountId) {
+        return transactionMapper
+                .getAllByAccountId(accountId)
+                .stream()
+                .map(TransactionService::createTransactionDto)
+                .collect(Collectors.toList());
+    }
+
+    private static TransactionDto createTransactionDto(Transaction transaction) {
+        return new TransactionDto(transaction.getId(), transaction.getAccountId(), transaction.getAmount(), transaction.getCurrency(), transaction.getDirection(), transaction.getDescription());
+    }
+
 }
