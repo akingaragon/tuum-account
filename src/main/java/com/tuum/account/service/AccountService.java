@@ -1,20 +1,12 @@
 package com.tuum.account.service;
 
-import com.tuum.account.dto.request.CreateAccountRequest;
-import com.tuum.account.dto.response.AccountBalanceDto;
-import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.entity.Account;
-import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.AccountStatus;
+import com.tuum.account.enums.Country;
 import com.tuum.account.exception.business.AccountNotFoundException;
 import com.tuum.account.mapper.AccountMapper;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,25 +14,14 @@ public class AccountService {
 
     private final AccountMapper accountMapper;
 
-    private final AccountBalanceService accountBalanceService;
-
-    @Transactional
-    public AccountDto createAccountWithInitialBalances(@Valid CreateAccountRequest createAccountRequest) {
-        Account account = createAccountEntity(createAccountRequest);
-
+    public Account createAccount(Long customerId, Country country) {
+        Account account = Account.builder()
+                .customerId(customerId)
+                .country(country)
+                .status(AccountStatus.ACTIVE)
+                .build();
         accountMapper.insertAccount(account);
-
-        createAccountRequest
-                .currencyList()
-                .forEach(currency -> accountBalanceService.createAccountBalance(new AccountBalance(account.getId(), currency)));
-
-        return getAccountDto(account.getId());
-    }
-
-    public AccountDto getAccountDto(Long id) {
-        Account account = getAccountById(id);
-        List<AccountBalanceDto> accountBalances = createAccountBalanceDtoList(account);
-        return createAccountDtoWithBalances(account, accountBalances);
+        return account;
     }
 
     protected Account getAccountById(Long id) {
@@ -51,23 +32,5 @@ public class AccountService {
         return account;
     }
 
-    private static Account createAccountEntity(CreateAccountRequest createAccountRequest) {
-        return Account.builder()
-                .customerId(createAccountRequest.customerId())
-                .country(createAccountRequest.country())
-                .status(AccountStatus.ACTIVE)
-                .build();
-    }
-
-    private static AccountDto createAccountDtoWithBalances(Account account, List<AccountBalanceDto> accountBalances) {
-        return new AccountDto(account.getId(), account.getCustomerId(), accountBalances);
-    }
-
-    private List<AccountBalanceDto> createAccountBalanceDtoList(Account account) {
-        return accountBalanceService
-                .getAccountBalancesByAccountId(account)
-                .stream()
-                .map(accountBalance -> new AccountBalanceDto(accountBalance.getAvailableAmount(), accountBalance.getCurrency())).collect(Collectors.toList());
-    }
 
 }

@@ -6,7 +6,7 @@ import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.enums.TransactionDirection;
-import com.tuum.account.service.AccountService;
+import com.tuum.account.service.AccountManagementService;
 import com.tuum.account.service.TransactionService;
 import com.tuum.account.util.IntegrationTestHelper;
 import org.junit.jupiter.api.Test;
@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 class AccountControllerIT {
 
-
     @Autowired
     private MockMvc mockMvc;
 
@@ -42,7 +41,7 @@ class AccountControllerIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AccountService accountService;
+    private AccountManagementService accountManagementService;
 
     @MockBean
     private TransactionService transactionService;
@@ -52,7 +51,7 @@ class AccountControllerIT {
         CreateAccountRequest request = getCreateAccountRequest();
         AccountDto accountDto = createAccountDto();
 
-        when(accountService.createAccountWithInitialBalances(any(CreateAccountRequest.class))).thenReturn(accountDto);
+        when(accountManagementService.createAccountWithInitialBalances(any(CreateAccountRequest.class))).thenReturn(accountDto);
 
         mockMvc.perform(post("/account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -89,7 +88,7 @@ class AccountControllerIT {
     void getAccountById() throws Exception {
         AccountDto accountDto = createAccountDto();
 
-        when(accountService.getAccountDto(ACCOUNT_ID)).thenReturn(accountDto);
+        when(accountManagementService.getAccount(ACCOUNT_ID)).thenReturn(accountDto);
 
         mockMvc.perform(get("/account/{id}", ACCOUNT_ID))
                 .andExpect(status().isOk())
