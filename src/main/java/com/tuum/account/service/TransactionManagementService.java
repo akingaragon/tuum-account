@@ -11,8 +11,8 @@ import com.tuum.account.enums.TransactionDirection;
 import com.tuum.account.exception.business.AccountBalanceNotFound;
 import com.tuum.account.exception.business.AccountBalanceNotSufficient;
 import com.tuum.account.exception.business.UnknownTransactionDirectionException;
-import com.tuum.account.mapper.TransactionMapper;
 import com.tuum.account.service.db.AccountDatabaseService;
+import com.tuum.account.service.db.TransactionDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -27,7 +27,8 @@ public class TransactionManagementService {
     private final AccountDatabaseService accountService;
 
     private final AccountBalanceManagementService accountBalanceService;
-    private final TransactionMapper transactionMapper;
+
+    private final TransactionDatabaseService transactionDatabaseService;
 
     @Transactional
     public synchronized CreateTransactionResponseDto createTransaction(CreateTransactionRequest createTransactionRequest) {
@@ -94,7 +95,7 @@ public class TransactionManagementService {
         transaction.setCurrency(createTransactionRequest.currency());
         transaction.setDirection(createTransactionRequest.transactionDirection());
         transaction.setDescription(createTransactionRequest.description());
-        transactionMapper.insertTransaction(transaction);
+        transactionDatabaseService.insertTransaction(transaction);
         return transaction;
     }
 
@@ -104,7 +105,7 @@ public class TransactionManagementService {
 
     public List<TransactionDto> getTransactionsByAccountId(Long accountId) {
         Account account = accountService.getAccountById(accountId);
-        return transactionMapper
+        return transactionDatabaseService
                 .getAllByAccountId(account.getId())
                 .stream()
                 .map(TransactionManagementService::createTransactionDto)
