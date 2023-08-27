@@ -7,7 +7,7 @@ import lombok.experimental.Accessors;
 
 import java.math.BigDecimal;
 
-@EqualsAndHashCode(of = "id", callSuper = false)
+@EqualsAndHashCode(callSuper = false)
 @Data
 @Accessors(chain = true)
 public class AccountBalance extends AbstractAuditable {
