@@ -1,30 +1,19 @@
 # Tuum Account API
 
 Assignment project for Tuum interview
+
 #### Swagger end point : http://localhost:8080/swagger-ui/index.html#/
 
-## Local development setup
+## Running application
 
 1. Build gradle project
 
+Command will create the jar that will be used in docker container
+
 `gradle clean build`
 
-2. Set Spring active profiles to `local`
+2. Boot up docker containers
 
-3. Boot up docker containers
+Once the PostgreSQL and RabbitMQ containers have successfully started, the main application will be run.
 
-## PostgreSQL
-
-I map Postgresql port to 5499 not to cause any conflict with one of running services port
-
-`docker-compose -f docker/postgresql.yml up -d`
-
-## RabbitMQ
-
-I map RabbitMQ ports to 5699 and 15999 not to cause any conflict with one of running services port
-
-`docker-compose -f docker/rabbitmq.yml up -d`
-
-4. Start up tuum-account-api
-
-`gradle bootRun --args='--spring.profiles.active=local'`
+docker-compose up
