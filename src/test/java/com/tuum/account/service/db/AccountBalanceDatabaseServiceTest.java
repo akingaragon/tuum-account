@@ -3,6 +3,7 @@ package com.tuum.account.service.db;
 import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.mapper.AccountBalanceMapper;
+import com.tuum.account.rabbit.RabbitPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -20,6 +21,9 @@ class AccountBalanceDatabaseServiceTest {
 
     @Mock
     AccountBalanceMapper accountBalanceMapper;
+
+    @Mock
+    RabbitPublisher rabbitPublisher;
 
     @Test
     void getAccountBalances() {

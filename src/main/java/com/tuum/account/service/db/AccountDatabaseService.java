@@ -5,6 +5,7 @@ import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.enums.Country;
 import com.tuum.account.exception.business.AccountNotFoundException;
 import com.tuum.account.mapper.AccountMapper;
+import com.tuum.account.rabbit.RabbitPublisher;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,7 @@ import org.springframework.stereotype.Service;
 public class AccountDatabaseService {
 
     private final AccountMapper accountMapper;
+    private final RabbitPublisher rabbitPublisher;
 
     public Account createAccount(Long customerId, Country country) {
         Account account = Account.builder()
@@ -21,6 +23,7 @@ public class AccountDatabaseService {
                 .status(AccountStatus.ACTIVE)
                 .build();
         accountMapper.insertAccount(account);
+        rabbitPublisher.sendAccountCreation(account);
         return account;
     }
 

@@ -5,6 +5,7 @@ import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.enums.Country;
 import com.tuum.account.exception.business.AccountNotFoundException;
 import com.tuum.account.mapper.AccountMapper;
+import com.tuum.account.rabbit.RabbitPublisher;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -29,6 +30,9 @@ class AccountDatabaseServiceTest {
 
     @Mock
     private AccountMapper accountMapper;
+
+    @Mock
+    RabbitPublisher rabbitPublisher;
 
     @Test
     void getAccountByIdAccountNotFoundExceptionTest() {

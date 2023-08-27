@@ -2,6 +2,7 @@ package com.tuum.account.service.db;
 
 import com.tuum.account.entity.Transaction;
 import com.tuum.account.mapper.TransactionMapper;
+import com.tuum.account.rabbit.RabbitPublisher;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +20,9 @@ class TransactionDatabaseServiceTest {
 
     @Mock
     private TransactionMapper transactionMapper;
+
+    @Mock
+    RabbitPublisher rabbitPublisher;
 
     @Test
     void insertTransaction() {
