@@ -93,4 +93,34 @@ class TransactionControllerIT {
                 .andExpect(status().isBadRequest());
 
     }
+
+    @Test
+    void createTransactionHandleHttpMessageNotReadableException() throws Exception {
+        mockMvc.perform(post("/transaction")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "accountId": 1,
+                                  "amount": 10,
+                                  "currency": "ABC",
+                                  "transactionDirection": "IN",
+                                  "description": "string"
+                                }"""))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createTransactionUnknownTransactionDirectionException() throws Exception {
+        mockMvc.perform(post("/transaction")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content("""
+                                {
+                                  "accountId": 1,
+                                  "amount": 10,
+                                  "currency": "EUR",
+                                  "transactionDirection": "UP",
+                                  "description": "string"
+                                }"""))
+                .andExpect(status().isBadRequest());
+    }
 }

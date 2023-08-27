@@ -17,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -71,6 +72,8 @@ public class TransactionManagementService {
 
     private void updateAccountBalance(AccountBalance accountBalance, BigDecimal newAvailableAmount) {
         accountBalance.setAvailableAmount(newAvailableAmount);
+        accountBalance.setUpdatedBy("system");
+        accountBalance.setUpdatedDate(Instant.now());
         accountBalanceManagementService.updateAvailableAmount(accountBalance);
     }
 

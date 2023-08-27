@@ -9,7 +9,9 @@ import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.entity.Transaction;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.enums.TransactionDirection;
+import com.tuum.account.exception.business.AccountBalanceNotFound;
 import com.tuum.account.exception.business.AccountBalanceNotSufficient;
+import com.tuum.account.exception.business.UnknownTransactionDirectionException;
 import com.tuum.account.service.db.TransactionDatabaseService;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -115,4 +117,37 @@ class TransactionManagementServiceTest {
         Assertions.assertEquals(transactionList.get(0).getDescription(), transactionsByAccountId.get(0).description());
 
     }
+
+    @ParameterizedTest
+    @EnumSource(Currency.class)
+    void accountBalanceNotFoundExceptionTest(Currency currency) {
+        AccountBalanceDto accountBalanceDto = new AccountBalanceDto(BigDecimal.TEN, currency);
+        AccountDto accountDto = new AccountDto(ACCOUNT_ID, CUSTOMER_ID, List.of(accountBalanceDto));
+
+        when(accountManagementService.getAccount(ACCOUNT_ID)).thenReturn(accountDto);
+        when(accountBalanceManagementService.getAccountBalance(ACCOUNT_ID, currency)).thenReturn(null);
+
+        CreateTransactionRequest createTransactionRequest = new CreateTransactionRequest(ACCOUNT_ID, BigDecimal.TEN, currency, TransactionDirection.IN, "Description");
+
+        Assertions.assertThrows(AccountBalanceNotFound.class, () -> transactionManagementService.createTransaction(createTransactionRequest));
+        Mockito.verifyNoInteractions(transactionDatabaseService);
+    }
+
+    @ParameterizedTest
+    @EnumSource(Currency.class)
+    void unknownTransactionDirectionExceptionTest(Currency currency) {
+        AccountBalanceDto accountBalanceDto = new AccountBalanceDto(BigDecimal.TEN, currency);
+        AccountBalance accountBalance = new AccountBalance(ACCOUNT_ID, currency);
+        accountBalance.setAvailableAmount(BigDecimal.TEN);
+        AccountDto accountDto = new AccountDto(ACCOUNT_ID, CUSTOMER_ID, List.of(accountBalanceDto));
+
+        when(accountManagementService.getAccount(ACCOUNT_ID)).thenReturn(accountDto);
+        when(accountBalanceManagementService.getAccountBalance(ACCOUNT_ID, currency)).thenReturn(accountBalance);
+
+        CreateTransactionRequest createTransactionRequest = new CreateTransactionRequest(ACCOUNT_ID, BigDecimal.TEN, currency, null, "Description");
+
+        Assertions.assertThrows(UnknownTransactionDirectionException.class, () -> transactionManagementService.createTransaction(createTransactionRequest));
+        Mockito.verifyNoInteractions(transactionDatabaseService);
+    }
+
 }

@@ -2,13 +2,13 @@ package com.tuum.account.entity;
 
 import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.enums.Country;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import lombok.experimental.Accessors;
 
-@EqualsAndHashCode(of = "id", callSuper = false)
-@Data
+@Getter
+@AllArgsConstructor
 @Accessors(chain = true)
 @Builder
 public class Account extends AbstractAuditable {
