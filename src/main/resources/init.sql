@@ -25,7 +25,7 @@ CREATE TABLE account_balance
 CREATE TABLE transaction
 (
     id           BIGSERIAL PRIMARY KEY,
-    account_id   BIGINT                                 NOT NULL,
+    account_id   BIGINT REFERENCES account (id)         NOT NULL,
     amount       NUMERIC(18, 2)                         NOT NULL,
     currency     VARCHAR(3)                             NOT NULL,
     direction    VARCHAR(3)                             NOT NULL,
