@@ -1,4 +1,4 @@
-package com.tuum.account.service;
+package com.tuum.account.service.db;
 
 import com.tuum.account.entity.Account;
 import com.tuum.account.enums.AccountStatus;
@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
-public class AccountService {
+public class AccountDatabaseService {
 
     private final AccountMapper accountMapper;
 
@@ -24,7 +24,7 @@ public class AccountService {
         return account;
     }
 
-    protected Account getAccountById(Long id) {
+    public Account getAccountById(Long id) {
         Account account = accountMapper.getAccountById(id);
         if (account == null) {
             throw new AccountNotFoundException(id);

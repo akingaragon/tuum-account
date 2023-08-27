@@ -12,6 +12,7 @@ import com.tuum.account.exception.business.AccountBalanceNotFound;
 import com.tuum.account.exception.business.AccountBalanceNotSufficient;
 import com.tuum.account.exception.business.UnknownTransactionDirectionException;
 import com.tuum.account.mapper.TransactionMapper;
+import com.tuum.account.service.db.AccountDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -23,9 +24,9 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TransactionService {
-    private final AccountService accountService;
+    private final AccountDatabaseService accountService;
 
-    private final AccountBalanceService accountBalanceService;
+    private final AccountBalanceManagementService accountBalanceService;
     private final TransactionMapper transactionMapper;
 
     @Transactional

@@ -6,6 +6,7 @@ import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.entity.Account;
 import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.Currency;
+import com.tuum.account.service.db.AccountDatabaseService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -19,8 +20,8 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountManagementService {
 
-    private final AccountService accountService;
-    private final AccountBalanceService accountBalanceService;
+    private final AccountDatabaseService accountService;
+    private final AccountBalanceManagementService accountBalanceManagementService;
 
     @Transactional
     public AccountDto createAccountWithInitialBalances(@Valid CreateAccountRequest request) {
@@ -29,7 +30,7 @@ public class AccountManagementService {
 
         List<AccountBalance> accountBalances = new ArrayList<>();
         for (Currency currency : request.currencyList()) {
-            AccountBalance accountBalance = accountBalanceService.createAccountBalance(account.getId(), currency);
+            AccountBalance accountBalance = accountBalanceManagementService.createAccountBalance(account.getId(), currency);
             accountBalances.add(accountBalance);
         }
         return createAccountDtoWithBalances(account, accountBalances);
@@ -37,7 +38,7 @@ public class AccountManagementService {
 
     public AccountDto getAccount(Long id) {
         Account account = accountService.getAccountById(id);
-        List<AccountBalance> accountBalances = accountBalanceService.getAccountBalancesByAccountId(account.getId());
+        List<AccountBalance> accountBalances = accountBalanceManagementService.getAccountBalancesByAccountId(account.getId());
 
         return createAccountDtoWithBalances(account, accountBalances);
     }

@@ -6,6 +6,7 @@ import com.tuum.account.entity.Account;
 import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.enums.Currency;
+import com.tuum.account.service.db.AccountDatabaseService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -21,16 +22,16 @@ import java.util.List;
 import static com.tuum.account.util.IntegrationTestHelper.*;
 
 @ExtendWith(MockitoExtension.class)
-public class AccountServiceTest {
+public class AccountManagementServiceTest {
 
     @InjectMocks
     private AccountManagementService accountManagementService;
 
     @Mock
-    private AccountService accountService;
+    private AccountDatabaseService accountService;
 
     @Mock
-    private AccountBalanceService accountBalanceService;
+    private AccountBalanceManagementService accountBalanceManagementService;
 
 
     @ParameterizedTest
@@ -41,7 +42,7 @@ public class AccountServiceTest {
         AccountBalance accountBalance = new AccountBalance(account.getId(), currency);
 
         Mockito.when(accountService.createAccount(CUSTOMER_ID, COUNTRY)).thenReturn(account);
-        Mockito.when(accountBalanceService.createAccountBalance(ACCOUNT_ID, currency)).thenReturn(accountBalance);
+        Mockito.when(accountBalanceManagementService.createAccountBalance(ACCOUNT_ID, currency)).thenReturn(accountBalance);
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of(currency));
         AccountDto accountDto = accountManagementService.createAccountWithInitialBalances(createAccountRequest);
@@ -51,4 +52,20 @@ public class AccountServiceTest {
         accountDto.balances().forEach(k -> Assertions.assertThat(BigDecimal.ZERO.equals(k.availableAmount())));
     }
 
+
+    @ParameterizedTest
+    @EnumSource(Currency.class)
+    void getAccount(Currency currency) {
+        Account account = Account.builder().id(ACCOUNT_ID).customerId(CUSTOMER_ID).country(COUNTRY).status(AccountStatus.ACTIVE).build();
+        AccountBalance accountBalance = new AccountBalance(account.getId(), currency);
+
+        Mockito.when(accountService.getAccountById(ACCOUNT_ID)).thenReturn(account);
+        Mockito.when(accountBalanceManagementService.getAccountBalancesByAccountId(ACCOUNT_ID)).thenReturn(List.of(accountBalance));
+
+        AccountDto accountDto = accountManagementService.getAccount(ACCOUNT_ID);
+
+        Assertions.assertThat(accountDto.balances().get(0).availableAmount().equals(accountBalance.getAvailableAmount()));
+        Assertions.assertThat(accountDto.balances().get(0).currency().equals(accountBalance.getCurrency()));
+
+    }
 }
