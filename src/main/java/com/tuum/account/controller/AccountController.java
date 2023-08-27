@@ -3,7 +3,7 @@ package com.tuum.account.controller;
 import com.tuum.account.dto.request.CreateAccountRequest;
 import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.dto.response.TransactionDto;
-import com.tuum.account.service.AccountService;
+import com.tuum.account.service.AccountManagementService;
 import com.tuum.account.service.TransactionService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
@@ -18,7 +18,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountController {
 
-    private final AccountService accountService;
+    private final AccountManagementService accountManagementService;
 
     private final TransactionService transactionService;
 
@@ -26,14 +26,14 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create account")
     public AccountDto createAccount(@RequestBody @Valid CreateAccountRequest createAccountRequest) {
-        return accountService.createAccountWithInitialBalances(createAccountRequest);
+        return accountManagementService.createAccountWithInitialBalances(createAccountRequest);
     }
 
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get account info")
     public AccountDto getAccountById(@PathVariable Long id) {
-        return accountService.getAccountDto(id);
+        return accountManagementService.getAccount(id);
     }
 
     @GetMapping("/{id}/transaction")

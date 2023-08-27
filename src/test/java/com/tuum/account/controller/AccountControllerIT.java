@@ -6,6 +6,7 @@ import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.enums.TransactionDirection;
+import com.tuum.account.service.AccountManagementService;
 import com.tuum.account.service.AccountService;
 import com.tuum.account.service.TransactionService;
 import com.tuum.account.util.IntegrationTestHelper;
@@ -42,7 +43,7 @@ class AccountControllerIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private AccountService accountService;
+    private AccountManagementService accountManagementService;
 
     @MockBean
     private TransactionService transactionService;
@@ -52,7 +53,7 @@ class AccountControllerIT {
         CreateAccountRequest request = getCreateAccountRequest();
         AccountDto accountDto = createAccountDto();
 
-        when(accountService.createAccountWithInitialBalances(any(CreateAccountRequest.class))).thenReturn(accountDto);
+        when(accountManagementService.createAccountWithInitialBalances(any(CreateAccountRequest.class))).thenReturn(accountDto);
 
         mockMvc.perform(post("/account")
                         .contentType(MediaType.APPLICATION_JSON)
@@ -64,12 +65,32 @@ class AccountControllerIT {
                 .andExpect(jsonPath("$.balances[0].currency").value(accountDto.balances().get(0).currency().toString()));
     }
 
+    @Test
+    void createAccountEmptyCurrencyListException() throws Exception {
+        CreateAccountRequest request = new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of());
+
+        mockMvc.perform(post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createAccountNullCustomerIdException() throws Exception {
+        CreateAccountRequest request = new CreateAccountRequest(null, COUNTRY, List.of());
+
+        mockMvc.perform(post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     void getAccountById() throws Exception {
         AccountDto accountDto = createAccountDto();
 
-        when(accountService.getAccountDto(ACCOUNT_ID)).thenReturn(accountDto);
+        when(accountManagementService.getAccount(ACCOUNT_ID)).thenReturn(accountDto);
 
         mockMvc.perform(get("/account/{id}", ACCOUNT_ID))
                 .andExpect(status().isOk())
