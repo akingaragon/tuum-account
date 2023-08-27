@@ -1,9 +1,15 @@
 spring:
   datasource:
-    url: jdbc:postgresql://localhost:5499/tuum_account_db
+    url: jdbc:postgresql://postgres:5432/tuum_account_db
     username: tuum_account_user
     password: tuum_account_password
     driver-class-name: org.postgresql.Driver
+
+  rabbitmq:
+    host: rabbitmq
+    port: 5672
+    username: guest
+    password: guest
 
 springdoc:
   api-docs:

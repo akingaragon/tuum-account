@@ -1,0 +1,36 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:latest
+    environment:
+      POSTGRES_DB: tuum_account_db
+      POSTGRES_USER: tuum_account_user
+      POSTGRES_PASSWORD: tuum_account_password
+    ports:
+      - "5432:5432"
+    networks:
+      - mynetwork
+
+  rabbitmq:
+    image: rabbitmq:management
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    networks:
+      - mynetwork
+
+  spring-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+      - "5005:5005"
+    depends_on:
+      - postgres
+      - rabbitmq
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
