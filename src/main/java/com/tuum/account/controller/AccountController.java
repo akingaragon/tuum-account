@@ -36,7 +36,7 @@ public class AccountController {
         return accountService.getAccountDto(id);
     }
 
-    @GetMapping("/{id}/transactions")
+    @GetMapping("/{id}/transaction")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get transactions for an account")
     public List<TransactionDto> getTransactionsByAccountId(@PathVariable Long id) {

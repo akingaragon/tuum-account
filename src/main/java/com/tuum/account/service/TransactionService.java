@@ -102,8 +102,9 @@ public class TransactionService {
     }
 
     public List<TransactionDto> getTransactionsByAccountId(Long accountId) {
+        Account account = accountService.getAccountById(accountId);
         return transactionMapper
-                .getAllByAccountId(accountId)
+                .getAllByAccountId(account.getId())
                 .stream()
                 .map(TransactionService::createTransactionDto)
                 .collect(Collectors.toList());
