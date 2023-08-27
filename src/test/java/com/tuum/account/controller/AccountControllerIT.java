@@ -64,6 +64,26 @@ class AccountControllerIT {
                 .andExpect(jsonPath("$.balances[0].currency").value(accountDto.balances().get(0).currency().toString()));
     }
 
+    @Test
+    void createAccountEmptyCurrencyListException() throws Exception {
+        CreateAccountRequest request = new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of());
+
+        mockMvc.perform(post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void createAccountNullCustomerIdException() throws Exception {
+        CreateAccountRequest request = new CreateAccountRequest(null, COUNTRY, List.of());
+
+        mockMvc.perform(post("/account")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     void getAccountById() throws Exception {

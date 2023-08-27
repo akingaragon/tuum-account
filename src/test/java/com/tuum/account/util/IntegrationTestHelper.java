@@ -12,8 +12,8 @@ import java.util.List;
 public class IntegrationTestHelper {
     public static final Long ACCOUNT_ID = 1L;
     public static final Long TRANSACTION_ID = 1L;
-    private static final Long CUSTOMER_ID = 1L;
-    private static final Country COUNTRY = Country.EE;
+    public static final Long CUSTOMER_ID = 1L;
+    public static final Country COUNTRY = Country.EE;
 
     public static CreateAccountRequest getCreateAccountRequest() {
         return new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of(Currency.EUR));
