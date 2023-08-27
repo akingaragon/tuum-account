@@ -7,11 +7,13 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
+
 @Getter
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class Account extends AbstractAuditable {
+public class Account extends AbstractAuditable  implements Serializable {
 
     private Long id;
 

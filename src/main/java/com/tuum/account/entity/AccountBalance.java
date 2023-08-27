@@ -5,12 +5,13 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.experimental.Accessors;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
 @EqualsAndHashCode(callSuper = false)
 @Data
 @Accessors(chain = true)
-public class AccountBalance extends AbstractAuditable {
+public class AccountBalance extends AbstractAuditable  implements Serializable {
 
     private Long id;
 
