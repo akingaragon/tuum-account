@@ -7,7 +7,7 @@ import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.service.db.AccountDatabaseService;
-import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
@@ -47,9 +47,9 @@ public class AccountManagementServiceTest {
         CreateAccountRequest createAccountRequest = new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of(currency));
         AccountDto accountDto = accountManagementService.createAccountWithInitialBalances(createAccountRequest);
 
-        Assertions.assertThat(CUSTOMER_ID.equals(accountDto.customerId()));
-        Assertions.assertThat(ACCOUNT_ID.equals(accountDto.accountId()));
-        accountDto.balances().forEach(k -> Assertions.assertThat(BigDecimal.ZERO.equals(k.availableAmount())));
+        Assertions.assertEquals(CUSTOMER_ID, accountDto.customerId());
+        Assertions.assertEquals(ACCOUNT_ID, accountDto.accountId());
+        accountDto.balances().forEach(k -> Assertions.assertEquals(BigDecimal.ZERO, k.availableAmount()));
     }
 
 
@@ -64,8 +64,8 @@ public class AccountManagementServiceTest {
 
         AccountDto accountDto = accountManagementService.getAccount(ACCOUNT_ID);
 
-        Assertions.assertThat(accountDto.balances().get(0).availableAmount().equals(accountBalance.getAvailableAmount()));
-        Assertions.assertThat(accountDto.balances().get(0).currency().equals(accountBalance.getCurrency()));
+        Assertions.assertEquals(accountDto.balances().get(0).availableAmount(), accountBalance.getAvailableAmount());
+        Assertions.assertEquals(accountDto.balances().get(0).currency(), accountBalance.getCurrency());
 
     }
 }
