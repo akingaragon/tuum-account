@@ -1,9 +1,9 @@
 package com.tuum.account.service;
 
 import com.tuum.account.dto.request.CreateTransactionRequest;
+import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.dto.response.CreateTransactionResponseDto;
 import com.tuum.account.dto.response.TransactionDto;
-import com.tuum.account.entity.Account;
 import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.entity.Transaction;
 import com.tuum.account.enums.Currency;
@@ -11,7 +11,6 @@ import com.tuum.account.enums.TransactionDirection;
 import com.tuum.account.exception.business.AccountBalanceNotFound;
 import com.tuum.account.exception.business.AccountBalanceNotSufficient;
 import com.tuum.account.exception.business.UnknownTransactionDirectionException;
-import com.tuum.account.service.db.AccountDatabaseService;
 import com.tuum.account.service.db.TransactionDatabaseService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -24,55 +23,55 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class TransactionManagementService {
-    private final AccountDatabaseService accountService;
+    private final AccountManagementService accountManagementService;
 
-    private final AccountBalanceManagementService accountBalanceService;
+    private final AccountBalanceManagementService accountBalanceManagementService;
 
     private final TransactionDatabaseService transactionDatabaseService;
 
     @Transactional
     public synchronized CreateTransactionResponseDto createTransaction(CreateTransactionRequest createTransactionRequest) {
-        Account account = accountService.getAccountById(createTransactionRequest.accountId());
-        AccountBalance accountBalance = getAccountBalanceWithValidation(account, createTransactionRequest.currency());
+        AccountDto accountDto = accountManagementService.getAccount(createTransactionRequest.accountId());
+        AccountBalance accountBalance = getAccountBalanceWithValidation(accountDto, createTransactionRequest.currency());
 
         if (incomingTransaction(createTransactionRequest)) {
-            return processIncomingTransaction(createTransactionRequest, account, accountBalance);
+            return processIncomingTransaction(createTransactionRequest, accountDto, accountBalance);
         } else if (outgoingTransaction(createTransactionRequest)) {
-            return processOutgoingTransaction(createTransactionRequest, account, accountBalance);
+            return processOutgoingTransaction(createTransactionRequest, accountDto, accountBalance);
         } else {
             throw new UnknownTransactionDirectionException(createTransactionRequest.transactionDirection());
         }
     }
 
-    private AccountBalance getAccountBalanceWithValidation(Account account, Currency currency) {
-        AccountBalance accountBalance = accountBalanceService.getAccountBalance(account.getId(), currency);
+    private AccountBalance getAccountBalanceWithValidation(AccountDto accountDto, Currency currency) {
+        AccountBalance accountBalance = accountBalanceManagementService.getAccountBalance(accountDto.accountId(), currency);
         if (accountBalance == null) {
-            throw new AccountBalanceNotFound(account.getId(), currency);
+            throw new AccountBalanceNotFound(accountDto.accountId(), currency);
         }
         return accountBalance;
     }
 
-    private CreateTransactionResponseDto processIncomingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
-        Transaction transaction = createTransaction(createTransactionRequest, account);
+    private CreateTransactionResponseDto processIncomingTransaction(CreateTransactionRequest createTransactionRequest, AccountDto accountDto, AccountBalance accountBalance) {
+        Transaction transaction = createTransaction(createTransactionRequest, accountDto);
         BigDecimal newAvailableAmount = accountBalance.getAvailableAmount().add(createTransactionRequest.amount());
         updateAccountBalance(accountBalance, newAvailableAmount);
         return createTransactionDto(accountBalance, transaction);
     }
 
-    private CreateTransactionResponseDto processOutgoingTransaction(CreateTransactionRequest createTransactionRequest, Account account, AccountBalance accountBalance) {
+    private CreateTransactionResponseDto processOutgoingTransaction(CreateTransactionRequest createTransactionRequest, AccountDto accountDto, AccountBalance accountBalance) {
         if (hasSufficientFunds(createTransactionRequest, accountBalance)) {
-            Transaction transaction = createTransaction(createTransactionRequest, account);
+            Transaction transaction = createTransaction(createTransactionRequest, accountDto);
             BigDecimal newAvailableAmount = accountBalance.getAvailableAmount().subtract(createTransactionRequest.amount());
             updateAccountBalance(accountBalance, newAvailableAmount);
             return createTransactionDto(accountBalance, transaction);
         } else {
-            throw new AccountBalanceNotSufficient(account.getId());
+            throw new AccountBalanceNotSufficient(accountDto.accountId());
         }
     }
 
     private void updateAccountBalance(AccountBalance accountBalance, BigDecimal newAvailableAmount) {
         accountBalance.setAvailableAmount(newAvailableAmount);
-        accountBalanceService.updateAvailableAmount(accountBalance);
+        accountBalanceManagementService.updateAvailableAmount(accountBalance);
     }
 
 
@@ -88,9 +87,9 @@ public class TransactionManagementService {
         return createTransactionRequest.transactionDirection() == TransactionDirection.IN;
     }
 
-    private Transaction createTransaction(CreateTransactionRequest createTransactionRequest, Account account) {
+    private Transaction createTransaction(CreateTransactionRequest createTransactionRequest, AccountDto accountDto) {
         Transaction transaction = new Transaction();
-        transaction.setAccountId(account.getId());
+        transaction.setAccountId(accountDto.accountId());
         transaction.setAmount(createTransactionRequest.amount());
         transaction.setCurrency(createTransactionRequest.currency());
         transaction.setDirection(createTransactionRequest.transactionDirection());
@@ -104,9 +103,9 @@ public class TransactionManagementService {
     }
 
     public List<TransactionDto> getTransactionsByAccountId(Long accountId) {
-        Account account = accountService.getAccountById(accountId);
+        AccountDto accountDto = accountManagementService.getAccount(accountId);
         return transactionDatabaseService
-                .getAllByAccountId(account.getId())
+                .getAllByAccountId(accountDto.accountId())
                 .stream()
                 .map(TransactionManagementService::createTransactionDto)
                 .collect(Collectors.toList());
