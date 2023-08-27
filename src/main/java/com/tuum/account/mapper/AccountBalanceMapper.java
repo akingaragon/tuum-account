@@ -18,7 +18,7 @@ public interface AccountBalanceMapper {
     @Select("SELECT * FROM account_balance WHERE account_id = #{accountId} and currency = #{currency}")
     AccountBalance getAccountBalancesByAccountIdAndCurrency(Long accountId, Currency currency);
 
-    @Update("UPDATE account_balance SET available_amount = #{availableAmount} WHERE id = #{accountId}")
-    @Result(property = "accountId", column = "id")
+    @Update("UPDATE account_balance SET available_amount = #{availableAmount} WHERE id = #{id}")
+    @Result(property = "id", column = "id")
     void updateAccountBalance(AccountBalance accountBalance);
 }
