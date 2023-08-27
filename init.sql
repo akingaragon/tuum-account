@@ -1,4 +1,4 @@
-CREATE TABLE account
+CREATE TABLE IF NOT EXISTS account
 (
     id           BIGSERIAL PRIMARY KEY,
     customer_id  BIGINT                                 NOT NULL,
@@ -10,9 +10,9 @@ CREATE TABLE account
     updated_date timestamp
 );
 
-CREATE INDEX idx_account_customer_id ON account (customer_id);
+CREATE INDEX IF NOT EXISTS idx_account_customer_id ON account (customer_id);
 
-CREATE TABLE account_balance
+CREATE TABLE IF NOT EXISTS account_balance
 (
     id               BIGSERIAL PRIMARY KEY,
     account_id       BIGINT REFERENCES account (id)         NOT NULL,
@@ -24,9 +24,9 @@ CREATE TABLE account_balance
     updated_date     timestamp
 );
 
-CREATE INDEX idx_account_balance_account_id ON account_balance (account_id);
+CREATE INDEX IF NOT EXISTS idx_account_balance_account_id ON account_balance (account_id);
 
-CREATE TABLE transaction
+CREATE TABLE IF NOT EXISTS transaction
 (
     id           BIGSERIAL PRIMARY KEY,
     account_id   BIGINT REFERENCES account (id)         NOT NULL,
@@ -40,4 +40,4 @@ CREATE TABLE transaction
     updated_date timestamp
 );
 
-CREATE INDEX idx_transaction_account_id ON transaction (account_id);
+CREATE INDEX IF NOT EXISTS idx_transaction_account_id ON transaction (account_id);
