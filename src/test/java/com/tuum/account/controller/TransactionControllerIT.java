@@ -6,7 +6,7 @@ import com.tuum.account.dto.response.CreateTransactionResponseDto;
 import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.enums.TransactionDirection;
-import com.tuum.account.service.TransactionService;
+import com.tuum.account.service.TransactionManagementService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -36,7 +36,7 @@ class TransactionControllerIT {
     private ObjectMapper objectMapper;
 
     @MockBean
-    private TransactionService transactionService;
+    private TransactionManagementService transactionManagementService;
 
     @Test
     void createTransaction() throws Exception {
@@ -45,7 +45,7 @@ class TransactionControllerIT {
 
         CreateTransactionResponseDto responseDto = new CreateTransactionResponseDto(transactionDto, BigDecimal.TEN);
 
-        when(transactionService.createTransaction(any(CreateTransactionRequest.class))).thenReturn(responseDto);
+        when(transactionManagementService.createTransaction(any(CreateTransactionRequest.class))).thenReturn(responseDto);
 
         mockMvc.perform(post("/transaction")
                         .contentType(MediaType.APPLICATION_JSON)

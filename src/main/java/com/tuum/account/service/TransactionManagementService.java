@@ -23,7 +23,7 @@ import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
-public class TransactionService {
+public class TransactionManagementService {
     private final AccountDatabaseService accountService;
 
     private final AccountBalanceManagementService accountBalanceService;
@@ -107,7 +107,7 @@ public class TransactionService {
         return transactionMapper
                 .getAllByAccountId(account.getId())
                 .stream()
-                .map(TransactionService::createTransactionDto)
+                .map(TransactionManagementService::createTransactionDto)
                 .collect(Collectors.toList());
     }
 

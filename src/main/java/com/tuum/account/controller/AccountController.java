@@ -4,7 +4,7 @@ import com.tuum.account.dto.request.CreateAccountRequest;
 import com.tuum.account.dto.response.AccountDto;
 import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.service.AccountManagementService;
-import com.tuum.account.service.TransactionService;
+import com.tuum.account.service.TransactionManagementService;
 import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,7 +20,7 @@ public class AccountController {
 
     private final AccountManagementService accountManagementService;
 
-    private final TransactionService transactionService;
+    private final TransactionManagementService transactionManagementService;
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
@@ -40,6 +40,6 @@ public class AccountController {
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get transactions for an account")
     public List<TransactionDto> getTransactionsByAccountId(@PathVariable Long id) {
-        return transactionService.getTransactionsByAccountId(id);
+        return transactionManagementService.getTransactionsByAccountId(id);
     }
 }

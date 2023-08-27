@@ -7,7 +7,7 @@ import com.tuum.account.dto.response.TransactionDto;
 import com.tuum.account.enums.Currency;
 import com.tuum.account.enums.TransactionDirection;
 import com.tuum.account.service.AccountManagementService;
-import com.tuum.account.service.TransactionService;
+import com.tuum.account.service.TransactionManagementService;
 import com.tuum.account.util.IntegrationTestHelper;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +44,7 @@ class AccountControllerIT {
     private AccountManagementService accountManagementService;
 
     @MockBean
-    private TransactionService transactionService;
+    private TransactionManagementService transactionManagementService;
 
     @Test
     void createAccount() throws Exception {
@@ -105,7 +105,7 @@ class AccountControllerIT {
 
         List<TransactionDto> transactions = Collections.singletonList(transactionDto);
 
-        when(transactionService.getTransactionsByAccountId(IntegrationTestHelper.ACCOUNT_ID)).thenReturn(transactions);
+        when(transactionManagementService.getTransactionsByAccountId(IntegrationTestHelper.ACCOUNT_ID)).thenReturn(transactions);
 
         mockMvc.perform(get("/account/{id}/transaction", IntegrationTestHelper.ACCOUNT_ID))
                 .andExpect(status().isOk())
