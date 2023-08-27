@@ -21,7 +21,7 @@ services:
     networks:
       - mynetwork
 
-  spring-app:
+  tuum-account-app:
     build:
       context: .
       dockerfile: Dockerfile
