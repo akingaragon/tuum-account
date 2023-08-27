@@ -1,13 +1,13 @@
 package com.tuum.account.entity;
 
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.io.Serializable;
 import java.time.Instant;
 
-@NoArgsConstructor
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class AbstractAuditable implements Serializable {
 
     private String createdBy;

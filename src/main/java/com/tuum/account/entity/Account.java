@@ -13,7 +13,7 @@ import java.io.Serializable;
 @AllArgsConstructor
 @Accessors(chain = true)
 @Builder
-public class Account extends AbstractAuditable  implements Serializable {
+public class Account extends AbstractAuditable implements Serializable {
 
     private Long id;
 

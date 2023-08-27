@@ -1,17 +1,18 @@
 package com.tuum.account.entity;
 
 import com.tuum.account.enums.Currency;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
+import lombok.*;
 import lombok.experimental.Accessors;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
 
-@EqualsAndHashCode(callSuper = false)
+@EqualsAndHashCode(of = "id", callSuper = false)
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Accessors(chain = true)
-public class AccountBalance extends AbstractAuditable  implements Serializable {
+public class AccountBalance extends AbstractAuditable implements Serializable {
 
     private Long id;
 
