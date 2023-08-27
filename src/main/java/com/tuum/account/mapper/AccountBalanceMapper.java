@@ -1,9 +1,8 @@
 package com.tuum.account.mapper;
 
 import com.tuum.account.entity.AccountBalance;
-import org.apache.ibatis.annotations.Insert;
-import org.apache.ibatis.annotations.Mapper;
-import org.apache.ibatis.annotations.Select;
+import com.tuum.account.enums.Currency;
+import org.apache.ibatis.annotations.*;
 
 import java.util.List;
 
@@ -15,4 +14,11 @@ public interface AccountBalanceMapper {
 
     @Select("SELECT * FROM account_balance WHERE account_id = #{accountId}")
     List<AccountBalance> getAccountBalancesByAccountId(Long accountId);
+
+    @Select("SELECT * FROM account_balance WHERE account_id = #{accountId} and currency = #{currency}")
+    AccountBalance getAccountBalancesByAccountIdAndCurrency(Long accountId, Currency currency);
+
+    @Update("UPDATE account_balance SET available_amount = #{availableAmount} WHERE id = #{accountId}")
+    @Result(property = "accountId", column = "id")
+    void updateAccountBalance(AccountBalance accountBalance);
 }

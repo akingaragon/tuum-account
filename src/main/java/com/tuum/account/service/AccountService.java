@@ -7,7 +7,6 @@ import com.tuum.account.entity.Account;
 import com.tuum.account.entity.AccountBalance;
 import com.tuum.account.enums.AccountStatus;
 import com.tuum.account.exception.business.AccountNotFoundException;
-import com.tuum.account.mapper.AccountBalanceMapper;
 import com.tuum.account.mapper.AccountMapper;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -23,15 +22,15 @@ public class AccountService {
 
     private final AccountMapper accountMapper;
 
-    private final AccountBalanceMapper accountBalanceMapper;
+    private final AccountBalanceService accountBalanceService;
 
     @Transactional
-    public AccountDto createAccount(@Valid CreateAccountRequest createAccountRequest) {
+    public AccountDto createAccountWithInitialBalances(@Valid CreateAccountRequest createAccountRequest) {
         Account account = createAccountEntity(createAccountRequest);
 
         accountMapper.insertAccount(account);
 
-        insertAccountBalances(createAccountRequest, account);
+        createAccountBalances(createAccountRequest, account);
 
         return getAccountDto(account.getId());
     }
@@ -63,15 +62,15 @@ public class AccountService {
     }
 
     private List<AccountBalanceDto> createAccountBalanceDtoList(Account account) {
-        return accountBalanceMapper
-                .getAccountBalancesByAccountId(account.getId())
+        return accountBalanceService
+                .getAccountBalancesByAccountId(account)
                 .stream()
                 .map(accountBalance -> new AccountBalanceDto(accountBalance.getAvailableAmount(), accountBalance.getCurrency())).collect(Collectors.toList());
     }
 
-    private void insertAccountBalances(CreateAccountRequest createAccountRequest, Account account) {
+    private void createAccountBalances(CreateAccountRequest createAccountRequest, Account account) {
         createAccountRequest
                 .currencyList()
-                .forEach(currency -> accountBalanceMapper.insertAccountBalance(new AccountBalance(account.getId(), currency)));
+                .forEach(currency -> accountBalanceService.createAccountBalance(new AccountBalance(account.getId(), currency)));
     }
 }

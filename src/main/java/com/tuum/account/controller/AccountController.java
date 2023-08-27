@@ -20,7 +20,7 @@ public class AccountController {
     @ResponseStatus(HttpStatus.CREATED)
     @Operation(summary = "Create account")
     public AccountDto createAccount(@RequestBody @Valid CreateAccountRequest createAccountRequest) {
-        return accountService.createAccount(createAccountRequest);
+        return accountService.createAccountWithInitialBalances(createAccountRequest);
     }
 
     @GetMapping("/{id}")

@@ -1,7 +1,7 @@
 package com.tuum.account.exception;
 
 import com.fasterxml.jackson.databind.exc.InvalidFormatException;
-import com.tuum.account.exception.business.AccountNotFoundException;
+import com.tuum.account.exception.business.*;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -23,8 +23,8 @@ import java.util.stream.Collectors;
 @ControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
-    @ExceptionHandler(AccountNotFoundException.class)
-    public ResponseEntity<String> handleAccountNotFoundException(AccountNotFoundException exception) {
+    @ExceptionHandler({AccountNotFoundException.class, AccountBalanceNotFound.class, AccountBalanceNotSufficient.class, UnknownTransactionDirectionException.class})
+    public ResponseEntity<String> handleAccountNotFoundException(AccountBusinessException exception) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(exception.getMessage());
     }
 
