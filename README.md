@@ -1,6 +1,7 @@
 # Tuum Account API
 
 Assignment project for Tuum interview
+#### Swagger end point : http://localhost:8080/swagger-ui/index.html#/
 
 ## Local development setup
 

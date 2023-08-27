@@ -27,24 +27,22 @@ public class AccountService {
 
     @Transactional
     public AccountDto createAccount(@Valid CreateAccountRequest createAccountRequest) {
-        Account account = createNewAccountEntity(createAccountRequest);
+        Account account = createAccountEntity(createAccountRequest);
 
         accountMapper.insertAccount(account);
 
         insertAccountBalances(createAccountRequest, account);
 
-        List<AccountBalanceDto> accountBalances = createAccountBalanceDtoList(account);
-
-        return createAccountDto(account, accountBalances);
+        return getAccountDto(account.getId());
     }
 
     public AccountDto getAccountDto(Long id) {
-        Account account = getAccount(id);
+        Account account = getAccountById(id);
         List<AccountBalanceDto> accountBalances = createAccountBalanceDtoList(account);
-        return createAccountDto(account, accountBalances);
+        return createAccountDtoWithBalances(account, accountBalances);
     }
 
-    protected Account getAccount(Long id) {
+    protected Account getAccountById(Long id) {
         Account account = accountMapper.getAccountById(id);
         if (account == null) {
             throw new AccountNotFoundException(id);
@@ -52,11 +50,15 @@ public class AccountService {
         return account;
     }
 
-    private static Account createNewAccountEntity(CreateAccountRequest createAccountRequest) {
-        return new Account(createAccountRequest.customerId(), createAccountRequest.country(), AccountStatus.ACTIVE);
+    private static Account createAccountEntity(CreateAccountRequest createAccountRequest) {
+        return Account.builder()
+                .customerId(createAccountRequest.customerId())
+                .country(createAccountRequest.country())
+                .status(AccountStatus.ACTIVE)
+                .build();
     }
 
-    private static AccountDto createAccountDto(Account account, List<AccountBalanceDto> accountBalances) {
+    private static AccountDto createAccountDtoWithBalances(Account account, List<AccountBalanceDto> accountBalances) {
         return new AccountDto(account.getId(), account.getCustomerId(), accountBalances);
     }
 

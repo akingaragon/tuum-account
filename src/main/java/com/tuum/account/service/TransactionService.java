@@ -19,7 +19,7 @@ public class TransactionService {
 
     @Transactional
     public synchronized TransactionDto createTransaction(CreateTransactionRequest createTransactionRequest) {
-        Account account = accountService.getAccount(createTransactionRequest.accountId());
+        Account account = accountService.getAccountById(createTransactionRequest.accountId());
 
         //if(createTransactionRequest.transactionDirection()== TransactionDirection.IN){
         Transaction transaction = new Transaction();

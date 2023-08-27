@@ -26,7 +26,7 @@ public class AccountController {
     @GetMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     @Operation(summary = "Get account info")
-    public AccountDto getAccount(@PathVariable Long id) {
+    public AccountDto getAccountById(@PathVariable Long id) {
         return accountService.getAccountDto(id);
     }
 }
