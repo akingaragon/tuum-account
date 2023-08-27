@@ -12,23 +12,23 @@ import java.util.List;
 @RequiredArgsConstructor
 public class AccountBalanceManagementService {
 
-    private final AccountBalanceDatabaseService accountBalanceService;
+    private final AccountBalanceDatabaseService accountBalanceDatabaseService;
 
     public List<AccountBalance> getAccountBalancesByAccountId(Long accountId) {
-        return accountBalanceService.getAccountBalances(accountId);
+        return accountBalanceDatabaseService.getAccountBalances(accountId);
     }
 
     public AccountBalance createAccountBalance(Long accountId, Currency currency) {
         AccountBalance accountBalance = new AccountBalance(accountId, currency);
-        accountBalanceService.insertAccountBalance(accountBalance);
+        accountBalanceDatabaseService.insertAccountBalance(accountBalance);
         return accountBalance;
     }
 
     public AccountBalance getAccountBalance(Long accountId, Currency currency) {
-        return accountBalanceService.getAccountBalancesByAccountIdAndCurrency(accountId, currency);
+        return accountBalanceDatabaseService.getAccountBalancesByAccountIdAndCurrency(accountId, currency);
     }
 
     public void updateAvailableAmount(AccountBalance accountBalance) {
-        accountBalanceService.updateAccountBalance(accountBalance);
+        accountBalanceDatabaseService.updateAccountBalance(accountBalance);
     }
 }

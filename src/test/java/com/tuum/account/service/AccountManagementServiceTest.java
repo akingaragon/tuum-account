@@ -28,7 +28,7 @@ public class AccountManagementServiceTest {
     private AccountManagementService accountManagementService;
 
     @Mock
-    private AccountDatabaseService accountService;
+    private AccountDatabaseService accountDatabaseService;
 
     @Mock
     private AccountBalanceManagementService accountBalanceManagementService;
@@ -41,7 +41,7 @@ public class AccountManagementServiceTest {
         Account account = Account.builder().id(ACCOUNT_ID).customerId(CUSTOMER_ID).country(COUNTRY).status(AccountStatus.ACTIVE).build();
         AccountBalance accountBalance = new AccountBalance(account.getId(), currency);
 
-        Mockito.when(accountService.createAccount(CUSTOMER_ID, COUNTRY)).thenReturn(account);
+        Mockito.when(accountDatabaseService.createAccount(CUSTOMER_ID, COUNTRY)).thenReturn(account);
         Mockito.when(accountBalanceManagementService.createAccountBalance(ACCOUNT_ID, currency)).thenReturn(accountBalance);
 
         CreateAccountRequest createAccountRequest = new CreateAccountRequest(CUSTOMER_ID, COUNTRY, List.of(currency));
@@ -59,13 +59,15 @@ public class AccountManagementServiceTest {
         Account account = Account.builder().id(ACCOUNT_ID).customerId(CUSTOMER_ID).country(COUNTRY).status(AccountStatus.ACTIVE).build();
         AccountBalance accountBalance = new AccountBalance(account.getId(), currency);
 
-        Mockito.when(accountService.getAccountById(ACCOUNT_ID)).thenReturn(account);
+        Mockito.when(accountDatabaseService.getAccountById(ACCOUNT_ID)).thenReturn(account);
         Mockito.when(accountBalanceManagementService.getAccountBalancesByAccountId(ACCOUNT_ID)).thenReturn(List.of(accountBalance));
 
         AccountDto accountDto = accountManagementService.getAccount(ACCOUNT_ID);
 
-        Assertions.assertEquals(accountDto.balances().get(0).availableAmount(), accountBalance.getAvailableAmount());
-        Assertions.assertEquals(accountDto.balances().get(0).currency(), accountBalance.getCurrency());
+        Assertions.assertEquals(accountBalance.getAvailableAmount(), accountDto.balances().get(0).availableAmount());
+        Assertions.assertEquals(accountBalance.getCurrency(), accountDto.balances().get(0).currency());
+        Assertions.assertEquals(account.getId(), accountDto.accountId());
+        Assertions.assertEquals(account.getCustomerId(), accountDto.customerId());
 
     }
 }

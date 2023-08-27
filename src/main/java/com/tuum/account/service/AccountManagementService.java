@@ -20,13 +20,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class AccountManagementService {
 
-    private final AccountDatabaseService accountService;
+    private final AccountDatabaseService accountDatabaseService;
     private final AccountBalanceManagementService accountBalanceManagementService;
 
     @Transactional
     public AccountDto createAccountWithInitialBalances(@Valid CreateAccountRequest request) {
 
-        Account account = accountService.createAccount(request.customerId(), request.country());
+        Account account = accountDatabaseService.createAccount(request.customerId(), request.country());
 
         List<AccountBalance> accountBalances = new ArrayList<>();
         for (Currency currency : request.currencyList()) {
@@ -37,7 +37,7 @@ public class AccountManagementService {
     }
 
     public AccountDto getAccount(Long id) {
-        Account account = accountService.getAccountById(id);
+        Account account = accountDatabaseService.getAccountById(id);
         List<AccountBalance> accountBalances = accountBalanceManagementService.getAccountBalancesByAccountId(account.getId());
 
         return createAccountDtoWithBalances(account, accountBalances);
