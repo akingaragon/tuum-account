@@ -30,7 +30,9 @@ public class AccountService {
 
         accountMapper.insertAccount(account);
 
-        createAccountBalances(createAccountRequest, account);
+        createAccountRequest
+                .currencyList()
+                .forEach(currency -> accountBalanceService.createAccountBalance(new AccountBalance(account.getId(), currency)));
 
         return getAccountDto(account.getId());
     }
@@ -68,9 +70,4 @@ public class AccountService {
                 .map(accountBalance -> new AccountBalanceDto(accountBalance.getAvailableAmount(), accountBalance.getCurrency())).collect(Collectors.toList());
     }
 
-    private void createAccountBalances(CreateAccountRequest createAccountRequest, Account account) {
-        createAccountRequest
-                .currencyList()
-                .forEach(currency -> accountBalanceService.createAccountBalance(new AccountBalance(account.getId(), currency)));
-    }
 }
