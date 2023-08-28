@@ -14,9 +14,17 @@ Command will create the jar that will be used in docker container
 
 2. Boot up docker containers
 
-Once the PostgreSQL and RabbitMQ containers have successfully started, the main application will be run.
+run `docker-compose up` command and once the PostgreSQL and RabbitMQ containers have successfully started, the main application will be run.
 
-docker-compose up
+Application will be reachable on port 8080
+
+Rabbit will be reachable at http://localhost:15672/ , rabbit username and password is guest 
+
+![img.png](img.png)
+
+Port 5005 can be used for remote debugging
+
+ps: if you want to run application from your IDE then you need to change postgres and rabbit config from your application.yml
 
 
 
