@@ -68,3 +68,13 @@ Config: 2000 threads / 10 loop count
 Result: ~1200 RPS
 
 ![img_create_account_with_rabbit.png](img_create_account_with_rabbit.png)
+
+## How to scale horizontally
+
+To effectively scale applications horizontally, several key factors need consideration. 
+Firstly, ensure that the application architecture is stateless, enabling easy replication and distribution of requests across multiple instances. 
+Utilize load balancers to evenly distribute incoming traffic among these instances, preventing overload on any single server. 
+Avoid reliance on shared resources or session data, favoring stateless design principles. 
+When scaling, database strategies become pivotal; select technologies capable of horizontal scaling, such as sharding or replicas. 
+Efficient monitoring, autoscaling based on metrics, and consistent configuration management contribute to a smoothly scaled infrastructure. 
+Lastly, adopting caching strategies and embracing immutable infrastructure patterns further optimize performance and reliability in a horizontally scalable environment.
